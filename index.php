@@ -1,7 +1,5 @@
 <?php
 
-
-
 function getDB()
 {
     $dbhost = "localhost";
@@ -19,9 +17,9 @@ require 'vendor/autoload.php';
 
 $app = new \Slim\Slim();
 
-$app->get('/', function() {
+$app->get('/', function() use($app) {
     $app->response->setStatus(200);
-    echo "Welcome to Slim 3.0 based API";
+    echo "Welcome to watchr";
 }); 
 
 $app->get('/getBeacons', function () {
@@ -59,9 +57,10 @@ catch(PDOException $e) {
 
 
 $app->get('/getProductsArea/:area', function ($area) {
- $client_id = 'HOgYyYrY85Rxc2Q_-yYI-mCs';
-$client_secret = '9Fpk_dCzPT9oWzl3sitJ3ekdcmZYG-mh';
-$project_key = 'test-40abc';
+    
+    $client_id = 'HOgYyYrY85Rxc2Q_-yYI-mCs';
+    $client_secret = '9Fpk_dCzPT9oWzl3sitJ3ekdcmZYG-mh';
+    $project_key = 'test-40abc';
     $app = \Slim\Slim::getInstance();
     
     function makeRequest($url, $context) {
@@ -82,63 +81,37 @@ $project_key = 'test-40abc';
 }
 
 // Request AccessToken
-$authUrl = "https://$client_id:$client_secret@auth.sphere.io/oauth/token";
-$data = array("grant_type" => "client_credentials", "scope" => "manage_project:$project_key");
-$options = array(
-    'http' => array(
-        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-        'method'  => 'POST',
-        'content' => http_build_query($data),
-    ),
-);
-$context = stream_context_create($options);
-$authResult = makeRequest($authUrl, $context);
-$access_token = $authResult["access_token"];
-
-// Fetch products
-$productUrl = "https://api.sphere.io/$project_key/product-projections/search?staged=true&filter=variants.attributes.zone%3A".$area;
-$options = array(
-    'http' => array(
-        'header'  => "Authorization: Bearer $access_token",
-        'method'  => 'GET'
-    ),
-);
-$c = stream_context_create($options);
-$result = makeRequest($productUrl, $c);
-
-header('Content-Type: application/json');
-echo json_encode($result);
-
+    $authUrl = "https://$client_id:$client_secret@auth.sphere.io/oauth/token";
+    $data = array("grant_type" => "client_credentials", "scope" => "manage_project:$project_key");
+    $options = array(
+        'http' => array(
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data),
+        ),
+    );
+    $context = stream_context_create($options);
+    $authResult = makeRequest($authUrl, $context);
+    $access_token = $authResult["access_token"];
     
-//    try 
-//    {
-//        $db = getDB();
- 
-//        $sth = $db->prepare("SELECT * 
-//            FROM beacons
-//            ;");
- 
-//        $sth->bindParam(':id', $id, PDO::PARAM_INT);
-//        $sth->execute();
- 
-//        $student = $sth->fetchAll(PDO::FETCH_ASSOC);
- 
-//        if($student) {
-//            $app->response->setStatus(200);
-//            $app->response()->headers->set('Content-Type', 'application/json');
-//            echo json_encode($student);
-//            $db = null;
-//        } else {
-//            throw new PDOException('No records found.');
-//        }
- 
-//    }
-//catch(PDOException $e) {
-//  $app->response()->setStatus(404);
-//  echo '{"error":{"text":'. $e->getMessage() .'}}';
-//}
+    // Fetch products
+    if(area==0)
+    $productUrl = "https://api.sphere.io/$project_key/product-projections/search?staged=true";
+    else
+    $productUrl = "https://api.sphere.io/$project_key/product-projections/search?staged=true&filter=variants.attributes.zone%3A".$area;
+    $options = array(
+        'http' => array(
+            'header'  => "Authorization: Bearer $access_token",
+            'method'  => 'GET'
+        ),
+    );
+    $c = stream_context_create($options);
+    $result = makeRequest($productUrl, $c);
+    
+    header('Content-Type: application/json');
+    echo json_encode($result);
+
+  
 });
 
-
 $app->run();
-?>
