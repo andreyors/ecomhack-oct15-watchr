@@ -55,7 +55,7 @@ catch(PDOException $e) {
 }
 });
 
-
+//Retrives all the product from an area. If 0 then all products
 $app->get('/getProductsArea/:area', function ($area) {
     
     $client_id = 'HOgYyYrY85Rxc2Q_-yYI-mCs';
@@ -112,6 +112,76 @@ $app->get('/getProductsArea/:area', function ($area) {
     echo json_encode($result);
 
   
+});
+
+
+$app->post('/addPosition', function() use($app) {
+ 
+    $allPostVars = $app->request->post();
+    $x = $allPostVars['x'];
+    $y = $allPostVars['y'];
+    $stayed = $allPostVars['stayed'];
+    $user = $allPostVars['user'];
+ 
+    try 
+    {
+        $db = getDB();
+ 
+        $sth = $db->prepare("INSERT INTO 
+            locations (`x`,`y`,`stayed`,ts)
+            VALUES    (:x, :y, :stayed,NOW());");
+ 
+        $sth->bindParam(':x', $x, PDO::PARAM_STR);
+        $sth->bindParam(':y', $y, PDO::PARAM_STR);
+        $sth->bindParam(':stayed', $stayed, PDO::PARAM_INT);
+        //$sth->bindParam(':beacon_id', $beacon_id, PDO::PARAM_INT);
+        //$sth->bindParam(':ts', $ts, PDO::PARAM_INT);
+        $sth->execute();
+ 
+        $app->response->setStatus(200);
+        $app->response()->headers->set('Content-Type', 'application/json');
+        echo json_encode(array("status" => "success", "code" => 1));
+        $db = null;
+ 
+    } catch(PDOException $e) {
+        $app->response()->setStatus(404);
+        echo '{"error":{"text":'. $e->getMessage() .'}}';
+    }
+ 
+}); 
+
+$app->get('/getLastPosition', function () {
+ 
+    $app = \Slim\Slim::getInstance();
+ 
+    try 
+    {
+        $db = getDB();
+ 
+        $sth = $db->prepare("SELECT user,x,y 
+            FROM locations
+            ORDER BY id DESC LIMIT 1
+            ;");
+ 
+        $sth->bindParam(':id', $id, PDO::PARAM_INT);
+        $sth->execute();
+ 
+        $student = $sth->fetchAll(PDO::FETCH_ASSOC);
+ 
+        if($student) {
+            $app->response->setStatus(200);
+            $app->response()->headers->set('Content-Type', 'application/json');
+            echo json_encode($student);
+            $db = null;
+        } else {
+            throw new PDOException('No records found.');
+        }
+ 
+    }
+catch(PDOException $e) {
+  $app->response()->setStatus(404);
+  echo '{"error":{"text":'. $e->getMessage() .'}}';
+}
 });
 
 $app->run();
