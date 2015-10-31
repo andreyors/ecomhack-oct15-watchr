@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Name>economhack</Name>
+    <ProjectGuid>47b51880-fb26-4963-838b-3680009697bb</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>economhack</RootNamespace>
+    <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
+    <AssemblyName>economhack</AssemblyName>
+    <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+    <Server>PHPDev</Server>
+    <PublishEvent>None</PublishEvent>
+    <PHPDevAutoPort>True</PHPDevAutoPort>
+    <PHPDevPort>9282</PHPDevPort>
+    <PHPDevHostName>localhost</PHPDevHostName>
+    <IISProjectUrl>http://localhost:9282/</IISProjectUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <IncludeDebugInformation>true</IncludeDebugInformation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <IncludeDebugInformation>false</IncludeDebugInformation>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="config\db.php" />
+    <Compile Include="index.php" />
+    <Compile Include="lib\areaProducts.php" />
+    <Compile Include="lib\common.php" />
+    <Compile Include="lib\db\db.php" />
+    <Compile Include="lib\db\sperecredentials.php" />
+    <Compile Include="NotORM.php" />
+    <Compile Include="NotORM\Cache.php" />
+    <Compile Include="NotORM\Literal.php" />
+    <Compile Include="NotORM\MultiResult.php" />
+    <Compile Include="NotORM\Result.php" />
+    <Compile Include="NotORM\Row.php" />
+    <Compile Include="NotORM\Structure.php" />
+    <Compile Include="vendor\autoload.php" />
+    <Compile Include="vendor\composer\autoload_classmap.php" />
+    <Compile Include="vendor\composer\autoload_namespaces.php" />
+    <Compile Include="vendor\composer\autoload_psr4.php" />
+    <Compile Include="vendor\composer\autoload_real.php" />
+    <Compile Include="vendor\composer\ClassLoader.php" />
+    <Compile Include="vendor\slim\slim\index.php" />
+    <Compile Include="vendor\slim\slim\Slim\Environment.php" />
+    <Compile Include="vendor\slim\slim\Slim\Exception\Pass.php" />
+    <Compile Include="vendor\slim\slim\Slim\Exception\Stop.php" />
+    <Compile Include="vendor\slim\slim\Slim\Helper\Set.php" />
+    <Compile Include="vendor\slim\slim\Slim\Http\Cookies.php" />
+    <Compile Include="vendor\slim\slim\Slim\Http\Headers.php" />
+    <Compile Include="vendor\slim\slim\Slim\Http\Request.php" />
+    <Compile Include="vendor\slim\slim\Slim\Http\Response.php" />
+    <Compile Include="vendor\slim\slim\Slim\Http\Util.php" />
+    <Compile Include="vendor\slim\slim\Slim\Log.php" />
+    <Compile Include="vendor\slim\slim\Slim\LogWriter.php" />
+    <Compile Include="vendor\slim\slim\Slim\Middleware.php" />
+    <Compile Include="vendor\slim\slim\Slim\Middleware\ContentTypes.php" />
+    <Compile Include="vendor\slim\slim\Slim\Middleware\Flash.php" />
+    <Compile Include="vendor\slim\slim\Slim\Middleware\MethodOverride.php" />
+    <Compile Include="vendor\slim\slim\Slim\Middleware\PrettyExceptions.php" />
+    <Compile Include="vendor\slim\slim\Slim\Middleware\SessionCookie.php" />
+    <Compile Include="vendor\slim\slim\Slim\Route.php" />
+    <Compile Include="vendor\slim\slim\Slim\Router.php" />
+    <Compile Include="vendor\slim\slim\Slim\Slim.php" />
+    <Compile Include="vendor\slim\slim\Slim\View.php" />
+    <Compile Include="vendor\slim\slim\tests\bootstrap.php" />
+    <Compile Include="vendor\slim\slim\tests\EnvironmentTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Foo.php" />
+    <Compile Include="vendor\slim\slim\tests\Helper\SetTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Http\CookiesTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Http\HeadersTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Http\RequestTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Http\ResponseTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Http\UtilTest.php" />
+    <Compile Include="vendor\slim\slim\tests\LogTest.php" />
+    <Compile Include="vendor\slim\slim\tests\LogWriterTest.php" />
+    <Compile Include="vendor\slim\slim\tests\MiddlewareTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Middleware\ContentTypesTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Middleware\FlashTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Middleware\MethodOverrideTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Middleware\PrettyExceptionsTest.php" />
+    <Compile Include="vendor\slim\slim\tests\Middleware\SessionCookieTest.php" />
+    <Compile Include="vendor\slim\slim\tests\RouterTest.php" />
+    <Compile Include="vendor\slim\slim\tests\RouteTest.php" />
+    <Compile Include="vendor\slim\slim\tests\SlimTest.php" />
+    <Compile Include="vendor\slim\slim\tests\templates\test.php" />
+    <Compile Include="vendor\slim\slim\tests\ViewTest.php" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="config\" />
+    <Folder Include="lib\" />
+    <Folder Include="lib\db\" />
+    <Folder Include="NotORM\" />
+    <Folder Include="vendor\" />
+    <Folder Include="vendor\composer\" />
+    <Folder Include="vendor\slim\" />
+    <Folder Include="vendor\slim\slim\" />
+    <Folder Include="vendor\slim\slim\Slim\" />
+    <Folder Include="vendor\slim\slim\Slim\Exception\" />
+    <Folder Include="vendor\slim\slim\Slim\Helper\" />
+    <Folder Include="vendor\slim\slim\Slim\Http\" />
+    <Folder Include="vendor\slim\slim\Slim\Middleware\" />
+    <Folder Include="vendor\slim\slim\tests\" />
+    <Folder Include="vendor\slim\slim\tests\Helper\" />
+    <Folder Include="vendor\slim\slim\tests\Http\" />
+    <Folder Include="vendor\slim\slim\tests\Middleware\" />
+    <Folder Include="vendor\slim\slim\tests\templates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".htaccess" />
+    <Content Include="composer.json" />
+    <Content Include="composer.lock" />
+    <Content Include="vendor\composer\installed.json" />
+    <Content Include="vendor\composer\LICENSE" />
+    <Content Include="vendor\slim\slim\.gitignore" />
+    <Content Include="vendor\slim\slim\.htaccess" />
+    <Content Include="vendor\slim\slim\.travis.yml" />
+    <Content Include="vendor\slim\slim\composer.json" />
+    <Content Include="vendor\slim\slim\CONTRIBUTING.md" />
+    <Content Include="vendor\slim\slim\LICENSE" />
+    <Content Include="vendor\slim\slim\phpunit.xml.dist" />
+    <Content Include="vendor\slim\slim\README.markdown" />
+    <Content Include="vendor\slim\slim\tests\README" />
+  </ItemGroup>
+</Project>
