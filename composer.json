@@ -1,7 +1,7 @@
 {
-    "require": [{
+    "require": {
         "slim/slim": "^2.6"
-    }],
+    },
 	"autoload": {
 		"files": ["NotORM.php"]
 	}
