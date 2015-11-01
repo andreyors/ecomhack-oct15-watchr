@@ -6,15 +6,16 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+	<link rel="stylesheet" href="leaflet.css" />
     <style type="text/css">
-    .leaflet-container { background-color:fuchsia; }
+    .leaflet-container { background-color:white; }
     </style>
 </head>
 <body>
 	<div id="map" style="width: 1000px; height: 600px"></div>
 
-	<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+	<script src="leaflet.js"></script>
+	<script src="js/jquery-1.11.3.min.js"></script>
 	<script>
 
 		var map = L.map('map').setView([52.516650, 13.309996], 21);
@@ -28,34 +29,63 @@
             ];
         };
         
-//		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6IjZjNmRjNzk3ZmE2MTcwOTEwMGY0MzU3YjUzOWFmNWZhIn0.Y8bhBaUMqFiPrDRW9hieoQ', {
-//			maxZoom: 22,
-//			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-//				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-//				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-//			id: 'mapbox.streets'
-//		}).addTo(map);
         
-var imageUrl = 'http://www.schoofs-gruppe.de/uploads/pics/Grundriss_01.JPG',
+var imageUrl = 'img/rewe.jpg',
     imageBounds = [[52.51677, 13.30966], [52.51654, 13.31032]];
 
 L.imageOverlay(imageUrl, imageBounds).addTo(map);
-        
-var pointA = new L.LatLng(52.51658, 13.30978);
-var pointB = new L.LatLng(52.51672, 13.30985);
-var pointC = new L.LatLng(52.51668, 13.31013);
-var pointList = [pointA, pointB, pointC];
 
-var firstpolyline = new L.Polyline(pointList, {
-color: 'blue',
-weight: 4,
-opacity: 0.2,
-smoothFactor: 2
+var pointList = [];
 
-});
-firstpolyline.addTo(map);
+// ajax call
+var lastpos=[0,0];
+var CallMeBaby = function(){
+	$.ajax({
+		url: '../getLastPosition',
+		dataType: 'json',
+		cache: true,
+		timeout: 30000,
+		success: function(data) {
+			//console.log(data);
+			newcords =  getCoords([52.516650, 13.309996], data);
+			console.log(newcords);
+			if(lastpos!=newcords){
+				//delete marker
+				marker.setLatLng(newcords);
+				lastpos=newcords;
+				pointList.push(newcords);
+				drawline();
+			}
+		},
+		error: function(){
+			console.log("Ohi ohi! :( ajax call failled ");
+		}
+ 	});
+};
+setInterval(CallMeBaby, 5000);
+
+
+
+// end ajax call
+
+        var drawline = function(){
+        	
+        	var firstpolyline = new L.Polyline(pointList, {
+			color: '#0078A8;',
+			weight: 4,
+			opacity: 0.8,
+			smoothFactor: 2
+			
+			});
+			firstpolyline.addTo(map);
+        	
+        }
+
+
+
+
         
-		L.marker([52.516650, 13.309996]).addTo(map)
+		var marker=L.marker([52.516650, 13.309996]).addTo(map)
 			.bindPopup("<b>Kunde1</b><br />10 min").openPopup();
 
 		/*L.circle([52.516650, 13.309996], 5, {

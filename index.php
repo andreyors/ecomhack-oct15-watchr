@@ -13,6 +13,34 @@ function getDB()
     return $dbConnection;
 }
 
+function getLastPos($db) {
+    $sth = $db->prepare("SELECT 
+        x,
+        y,
+        TIMESTAMPDIFF(SECOND, ts, NOW()) AS ts
+    FROM 
+        locations
+    ORDER BY 
+        id DESC 
+    LIMIT 
+        1");
+    
+    $sth->execute();
+    
+    return $sth->fetch();
+}
+
+function distance($lat1, $lon1, $lat2, $lon2) {
+
+    $theta = $lon1 - $lon2;
+    $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+    $dist = acos($dist);
+    $dist = rad2deg($dist);
+    $miles = $dist * 60 * 1.1515;
+
+    return $miles * 1.609344 * 1000;
+}
+
 require 'vendor/autoload.php';
 
 $app = new \Slim\Slim();
@@ -116,39 +144,81 @@ $app->get('/getProductsArea/:area', function ($area) {
 
 
 $app->post('/addPosition', function() use($app) {
- 
-    $allPostVars = $app->request->post();
-    $x = $allPostVars['x'];
-    $y = $allPostVars['y'];
-    $stayed = $allPostVars['stayed'];
-    $user = $allPostVars['user'];
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
+    
+    $x = !empty($data['lat']) ? $data['lat'] : 0;
+    $y = !empty($data['lon']) ? $data['lon'] : 0;
+    
+    $stayed = 0;
  
     try 
     {
         $db = getDB();
- 
-        $sth = $db->prepare("INSERT INTO 
-            locations (`x`,`y`,`stayed`,ts)
-            VALUES    (:x, :y, :stayed,NOW());");
- 
-        $sth->bindParam(':x', $x, PDO::PARAM_STR);
-        $sth->bindParam(':y', $y, PDO::PARAM_STR);
-        $sth->bindParam(':stayed', $stayed, PDO::PARAM_INT);
-        //$sth->bindParam(':beacon_id', $beacon_id, PDO::PARAM_INT);
-        //$sth->bindParam(':ts', $ts, PDO::PARAM_INT);
-        $sth->execute();
- 
-        $app->response->setStatus(200);
-        $app->response()->headers->set('Content-Type', 'application/json');
-        echo json_encode(array("status" => "success", "code" => 1));
+        
+        $lastPos = getLastPos($db);
+        
+        $distance = distance($lastPos['x'], $lastPos['y'], $x, $y);
+        if ($distance < 2 && $lastPos['ts'] >= 1) {
+            $sth = $db->prepare("INSERT INTO 
+                locations (`x`,`y`,`stayed`,ts)
+                VALUES    (:x, :y, :stayed, NOW());");
+     
+            $sth->bindParam(':x', $x, PDO::PARAM_STR);
+            $sth->bindParam(':y', $y, PDO::PARAM_STR);
+            $sth->bindParam(':stayed', $stayed, PDO::PARAM_INT);
+            $sth->execute();
+     
+            $app->response->setStatus(200);
+            $app->response()->headers->set('Content-Type', 'application/json');
+            echo json_encode(array("status" => "success", "code" => $distance));
+        }
+        
         $db = null;
- 
     } catch(PDOException $e) {
         $app->response()->setStatus(404);
         echo '{"error":{"text":'. $e->getMessage() .'}}';
     }
  
 }); 
+
+$app->get('/getLast10Positions', function() {
+    $app = \Slim\Slim::getInstance();
+ 
+    try 
+    {
+        $db = getDB();
+ 
+    $sth = $db->prepare("SELECT 
+        x,
+        y,
+        TIMESTAMPDIFF(SECOND, ts, NOW()) AS ts
+    FROM 
+        locations
+    ORDER BY 
+        id DESC 
+    LIMIT 
+        10");
+    
+    $sth->execute();
+    
+    $result = $sth->fetchAll();
+ 
+        if ($result) {
+            $app->response->setStatus(200);
+            $app->response()->headers->set('Content-Type', 'application/json');
+            echo json_encode($result);
+            $db = null;
+        } else {
+            throw new PDOException('No records found.');
+        }
+ 
+    }
+    catch(PDOException $e) {
+        $app->response()->setStatus(404);
+        echo '{"error":{"text":'. $e->getMessage() .'}}';
+    }
+});
 
 $app->get('/getLastPosition', function () {
  
@@ -158,20 +228,12 @@ $app->get('/getLastPosition', function () {
     {
         $db = getDB();
  
-        $sth = $db->prepare("SELECT user,x,y 
-            FROM locations
-            ORDER BY id DESC LIMIT 1
-            ;");
+        $student = getLastPos($db);
  
-        $sth->bindParam(':id', $id, PDO::PARAM_INT);
-        $sth->execute();
- 
-        $student = $sth->fetchAll(PDO::FETCH_ASSOC);
- 
-        if($student) {
+        if ($student) {
             $app->response->setStatus(200);
             $app->response()->headers->set('Content-Type', 'application/json');
-            echo json_encode($student);
+            echo json_encode([$student['x'], $student['y']]);
             $db = null;
         } else {
             throw new PDOException('No records found.');
