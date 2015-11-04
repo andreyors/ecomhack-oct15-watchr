@@ -1633,8 +1633,8 @@ img {
   -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#66000000, endColorstr=#66000000);
 }
 .logo {
-  width: 350px;
-  height: 130px;
+   width: 150px;
+  height: 30px;
   background: url(img/gallery.png) 50% 50% no-repeat;
   display: inline-block;
   float: left;
